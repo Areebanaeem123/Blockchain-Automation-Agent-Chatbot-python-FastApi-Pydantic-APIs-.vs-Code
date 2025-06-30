@@ -1,5 +1,6 @@
-scam address :
-0x4274d11f6E2D99f23BBAEaf71B658b3bE0A6fA08
-
 safe address:
 0x742d35Cc6634C0532925a3b844Bc454e4438f44e
+scam address:
+0x9d8a62f656a8d1615c1294fd71e9cfb3e4855a4f
+Show me the latest news in crypto? - news
+0x742d35Cc6634C0532925a3b844Bc454e4438f44e - token balances 

@@ -8,12 +8,16 @@ import requests
 import os
 from dotenv import load_dotenv
 import json
+import feedparser
+from html import unescape
+from datetime import datetime , timezone
 load_dotenv()
 app = FastAPI()
 crypt_news_api_key = os.getenv("CRYPTO_NEWS_API_KEY")
 moralis_api_key = os.getenv("MORALIS_API_KEY")
 forta_api_key = os.getenv("FORTA_API_KEY")#not working  (paid version required)
 chainabuse_api_key = os.getenv("CHAINABUSE_API_KEY") #not working  (paid version required) 
+coindesk_api_key = os.getenv("COINDESK_API_KEY")
 class WalletAddress(BaseModel):
     address :str
 class ChatMessage(BaseModel):
@@ -27,7 +31,7 @@ import requests
 def check_phishing(address: str) -> str:
     try:
         # Load scam address database from local GitHub clone  
-        db_path = Path("blacklist/address.json") #set this path accordingly (see the folder scan-database) i cloned it from github 
+        db_path = Path("C:/Users/HP/Blockchain-automation-agent/scam-database/blacklist/address.json") #set this path accordingly (see the folder scan-database) i cloned it from github 
         if not db_path.exists():
             return "❌ ScamSniffer database not found. Make sure you cloned https://github.com/scamsniffer/scam-database."
         with db_path.open("r", encoding="utf-8") as f:
@@ -48,34 +52,54 @@ def check_phishing(address: str) -> str:
 
     except Exception as e:
         return f"❌ Error while checking ScamSniffer DB: {str(e)}"
-
-#for the crypto news thing 
-def get_crypto_news(query="crypto"):
-    url = f"https://cryptopanic.com/api/v1/posts/?auth_token={crypt_news_api_key}&currencies={query}&public=true"
+def get_crypto_news(query="Ethereum"):
+    url = "https://data-api.coindesk.com/news/v1/search"
+    headers={
+        "X-CoinDesk-API-Key": coindesk_api_key
+    }
+    params ={
+        "search_string": query,
+        "lang": "EN",
+        "source_key": "coindesk"
+    }
     try:
-        response = requests.get(url)
+        response = requests.get(url, headers=headers, params=params)
         response.raise_for_status()
         data = response.json()
-        articles = data.get("results", [])
+        articles = data.get("Data", [])
+        print(articles)
         if not articles:
-            return "No recent news found for this topic."
-        detailed_news = []
-        for article in articles[:10]:
-            title = article.get("title", "No Title")
-            published = article.get("published_at", "").split("T")[0]
-            source_name = article.get("source", {}).get("title", "Unknown Source")
-            link = article.get("url", "#")
-            summary = article.get("metadata", {}).get("description", "No description available.")
-            news_block = (
+            return f"No news found for '{query}'."
+        formatted_articles = []
+        for article in articles:
+            # Extract fields safely
+            published_ts = article.get("PUBLISHED_ON")
+            if published_ts:
+                published_date = datetime.fromtimestamp(published_ts, tz=timezone.utc).strftime('%Y-%m-%d')
+            else:
+                published_date = "Unknown"
+            title = article.get("TITLE", "No title")
+            subtitle = article.get("SUBTITLE", "No subtitle")
+            summary = article.get("SUMMARY", "No summary")
+            authors = article.get("AUTHORS", "Unknown")
+            body = article.get("BODY", "No body content")
+            block = (
                 f"🗞️ **{title}**\n"
-                f"📅 **Published**: {published}\n"
+                f"📅 **Published On**: {published_date}\n"
+                f"✍️ **Authors**: {authors}\n"
+                f"📋 **Subtitle**: {subtitle}\n"
                 f"📜 **Summary**: {summary}\n"
-                f"🔗 **Source**: [{source_name}]({link})"
+                f"📝 **Content**:\n{body[:500]}..."  # Trim body for display
             )
-            detailed_news.append(news_block)
-        return "\n\n---\n\n".join(detailed_news)
+            formatted_articles.append(block)
+
+        return "\n\n---\n\n".join(formatted_articles)
+
+    except requests.exceptions.RequestException as e:
+        return f"❌ API request error: {e}"
     except Exception as e:
-        return f"❌ Error fetching crypto news: {e}"
+        return f"❌ General error: {e}"
+
 #for the token balance thing
 def get_token_balances(address: str):
     url = f"https://deep-index.moralis.io/api/v2.2/{address}/erc20"

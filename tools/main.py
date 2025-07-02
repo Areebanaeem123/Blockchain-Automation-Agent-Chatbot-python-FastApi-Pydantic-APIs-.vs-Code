@@ -171,19 +171,21 @@ async def chat_endpoint(req: ChatHistoryRequest):
             results = get_token_balances(params["Wallet Address"])
             final_response = merge_chat_response(ass_resp["Answer"], results)
             ass_resp["Answer"] = final_response
-        elif fn == "get_crypto_news": #because the api i have used it gives info for the keywords like ETH , BTC thats why i have done mapping here 
+        elif fn == "get_crypto_news":
             COIN_MAP = {
-                "ethereum": "ETH",
-                "bitcoin": "BTC",
-                "solana": "SOL",
-                "cardano": "ADA",
-                "dogecoin": "DOGE"
+                "ethereum": "ETH", "eth": "ETH",
+                "bitcoin": "BTC", "btc": "BTC",
+                "solana": "SOL", "sol": "SOL",
+                "cardano": "ADA", "ada": "ADA",
+                "dogecoin": "DOGE", "doge": "DOGE"
             }
-            # Right before calling get_crypto_news():
-            query = params["Query"].lower()
-            params["Query"] = COIN_MAP.get(query, query.upper())
-            results = get_crypto_news(params["Query"])
+
+            query = params.get("Query", "crypto")  # fallback to general news
+            query = query.lower()
+            query = COIN_MAP.get(query, query)
+            results = get_crypto_news(query)
             final_response = merge_chat_response(ass_resp["Answer"], results)
             ass_resp["Answer"] = final_response
+
     chat_history.append({"role": "assistant", "content": json.dumps(ass_resp)})
     return {"history": chat_history, "response": ass_resp["Answer"]}

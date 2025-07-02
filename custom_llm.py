@@ -6,7 +6,7 @@ import requests
 
 class NgrokChatLLM(LLM, BaseModel):
     api_url: str = Field(default="https://206c-20-106-58-127.ngrok-free.app/chat")
-    temperature: float = Field(default=0.7)
+    temperature: float = Field(default=0)
     model: str = Field(default="gpt-4o")
 
     @property

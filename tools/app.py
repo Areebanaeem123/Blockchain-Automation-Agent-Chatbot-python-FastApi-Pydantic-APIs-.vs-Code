@@ -12,8 +12,8 @@ load_dotenv()
 app = FastAPI()
 crypt_news_api_key = os.getenv("CRYPTO_NEWS_API_KEY")
 moralis_api_key = os.getenv("MORALIS_API_KEY")
-forta_api_key = os.getenv("FORTA_API_KEY")#not working 
-chainabuse_api_key = os.getenv("CHAINABUSE_API_KEY") #not working 
+forta_api_key = os.getenv("FORTA_API_KEY")#not working  (paid version required)
+chainabuse_api_key = os.getenv("CHAINABUSE_API_KEY") #not working  (paid version required) 
 class WalletAddress(BaseModel):
     address :str
 class ChatMessage(BaseModel):
@@ -26,8 +26,8 @@ class ChatHistoryRequest(BaseModel):
 import requests
 def check_phishing(address: str) -> str:
     try:
-        # Load scam address database from local GitHub clone
-        db_path = Path("C:/Users/HP/scam-database/blacklist/address.json")
+        # Load scam address database from local GitHub clone  
+        db_path = Path("blacklist/address.json") #set this path accordingly (see the folder scan-database) i cloned it from github 
         if not db_path.exists():
             return "❌ ScamSniffer database not found. Make sure you cloned https://github.com/scamsniffer/scam-database."
         with db_path.open("r", encoding="utf-8") as f:
@@ -74,7 +74,6 @@ def get_crypto_news(query="crypto"):
             )
             detailed_news.append(news_block)
         return "\n\n---\n\n".join(detailed_news)
-
     except Exception as e:
         return f"❌ Error fetching crypto news: {e}"
 #for the token balance thing

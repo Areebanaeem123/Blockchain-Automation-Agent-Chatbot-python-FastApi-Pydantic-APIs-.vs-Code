@@ -66,7 +66,6 @@ def get_crypto_news(query="crypto"):
             source_name = article.get("source", {}).get("title", "Unknown Source")
             link = article.get("url", "#")
             summary = article.get("metadata", {}).get("description", "No description available.")
-
             news_block = (
                 f"🗞️ **{title}**\n"
                 f"📅 **Published**: {published}\n"
@@ -74,7 +73,6 @@ def get_crypto_news(query="crypto"):
                 f"🔗 **Source**: [{source_name}]({link})"
             )
             detailed_news.append(news_block)
-
         return "\n\n---\n\n".join(detailed_news)
 
     except Exception as e:

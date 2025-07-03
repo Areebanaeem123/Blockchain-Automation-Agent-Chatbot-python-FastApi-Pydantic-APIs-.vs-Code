@@ -43,4 +43,16 @@ A powerful AI-driven blockchain assistant that helps users interact with on-chai
 ```bash
 git clone https://github.com/your-username/blockchain-chatbot.git
 cd blockchain-chatbot
+![image](https://github.com/user-attachments/assets/528d224d-cfc7-4ffb-ab9d-030d6e01e83f)
+![image](https://github.com/user-attachments/assets/84b5035a-986b-4e70-9c0b-ddb89e95b5d8)
+![image](https://github.com/user-attachments/assets/af62ae33-3d96-4aef-88ee-7f4f00fc8558)
+![image](https://github.com/user-attachments/assets/3ec43f59-26bb-4377-8b3e-98c4c94f3541)
+![image](https://github.com/user-attachments/assets/c45f72a2-3135-490c-abd8-6b1dac62fc65)
+![image](https://github.com/user-attachments/assets/9664c771-e9c9-4dea-aa26-daca5619ead5)
+
+
+
+
+
+
 
